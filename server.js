@@ -10,7 +10,11 @@ const  User  = require("./models/User");
 const bcrypt = require("bcrypt");
 require("dotenv").config(".env");
 const process = require("process");
-//const  { fork } = require("child_process");
+
+const  { fork } = require("child_process");
+const cluster = require("cluster");
+const os = require("os");
+
 const parse = require("yargs/yargs");
 const routerRandom = require("./routes/random_r.js");
 
@@ -84,14 +88,40 @@ passport.deserializeUser( async function(id, done){
 const args = yargs.argv; 
 const PORT = process.env.PORT || 8080;
 */
+const numPC = os.cpus().length;
 const yargs = parse(process.argv.slice(2));
-const port = yargs	
+
+const {port, mode} = yargs	
+    .boolean("debug")
+    .alias({
+        p: "port"
+    })
 	.default({        
-		port: 8080,		
-}).argv;
+		port: 8081,		
+    }
+    ).argv;
 
 const PORT = port;
 //YARGS
+if (mode === "cluster" && cluster.isPrimary) clusterMode();
+
+function clusterMode() {
+	console.log(`NUM PC'S: ${numPC}`);
+	console.log(`PID MASTER ${process.pid}`);
+
+	
+    for (let i = 0; i < numPC; i++) {
+		cluster.fork();
+	}
+     
+    //cluster.fork();
+	cluster.on("exit", (worker) => {
+		console.log("Worker", worker.process.pid, "died", new Date().toLocaleString());
+		cluster.fork();
+	});
+
+	return false;
+}
 
 app.post("/register", (req, res) => {
     const {username, password , direccion} = req.body;    

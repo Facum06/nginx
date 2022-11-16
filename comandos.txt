@@ -1,0 +1,6 @@
+pm2 start .\server.js -- --port=8080 --mode=fork
+
+CLUSTER
+pm2 start .\server.js --name="server2" --watch -i max -- 8082   
+FORK
+pm2 start .\server.js --name='server1' --watch 8081
