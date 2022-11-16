@@ -1,0 +1,11 @@
+
+.card {
+  width: 42%;
+  padding: 20px;
+}
+.titulo {
+  padding: 10px;
+}
+.mayus{
+  text-transform: uppercase;
+}

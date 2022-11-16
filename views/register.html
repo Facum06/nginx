@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <title>Registrarse</title>
+  <link rel="stylesheet" href="./css/login.css">
+</head>
+<body>
+  <div class="container" align="center">
+    <div class="card">
+        <div class="row">
+            <div class="col" align="center">
+              <h1>Registrarse </h1>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <form>
+                  <!-- Email input -->
+                  <div class="form-outline mb-4" id="formLogUser">
+                    <input type="email" id="user" class="form-control" />
+                    <label class="form-label" for="form2Example1">Email</label>
+                  </div>                
+                  <!-- Password input -->
+                  <div class="form-outline mb-4" id="formLogPass">
+                    <input type="password" id="pass" class="form-control" />
+                    <label class="form-label" for="form2Example2">Password</label>
+                  </div>          
+                  <div class="form-outline mb-4" id="formLogPass">
+                    <input type="text" id="direccion" class="form-control" />
+                    <label class="form-label" for="form2Example2">Direccion</label>
+                  </div>  
+                  <div id="status">
+
+                  </div>    
+                  <button type="button" id="btnRegister" class="btn  btn-outline-success btn-block mb-4">Registrarse</button>    
+                  <a type="button" href="/log" class="btn  btn-outline-danger btn-block mb-4">Volver</a>                    
+                </form>
+             </div>
+        </div> 
+    </div>
+  </div>
+  <script src="./js/register.js"></script>
+</body>
+</html>
