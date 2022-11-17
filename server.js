@@ -16,7 +16,7 @@ const cluster = require("cluster");
 const os = require("os");
 
 const parse = require("yargs/yargs");
-const routerRandom = require("./routes/random_r.js");
+
 
 const serverInfo = {
     arguments: process.argv.slice(2),
@@ -40,9 +40,7 @@ app.use("/registerHome", express.static(__dirname + "/views"));
 app.use("/home", express.static(__dirname + "/views"));
 app.use("/login-error", express.static(__dirname + "/views"));
 
-//EJERCICIO RANDOM
-app.use("/api/randoms", routerRandom);
-//EJERCICIO RANDOM
+
 
 //SESSION
 app.use(session({
@@ -103,7 +101,14 @@ const {port, mode} = yargs
 
 const PORT = port;
 //YARGS
-if (mode === "cluster" && cluster.isPrimary) clusterMode();
+if (mode === "cluster" && cluster.isPrimary) {
+    clusterMode();
+}else {
+    const routerRandom = require("./routes/random_r.js");
+    //EJERCICIO RANDOM
+    app.use("/api/randoms", routerRandom);
+    //EJERCICIO RANDOM
+}
 
 function clusterMode() {
 	console.log(`NUM PC'S: ${numPC}`);
