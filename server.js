@@ -223,7 +223,9 @@ if (modoCluster && cluster.isPrimary) {
       cluster.fork();
     });
   } else {    
-  
+    const routerRandom = require("./routes/random_r.js");
+    //EJERCICIO RANDOM
+    app.use("/api/randoms", routerRandom);
     app.listen(PORT, () => {
       console.log(`Servidor express escuchando en el puerto ${PORT}`);
       console.log(`PID WORKER ${process.pid}`);
