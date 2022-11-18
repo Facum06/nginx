@@ -10,13 +10,10 @@ const  User  = require("./models/User");
 const bcrypt = require("bcrypt");
 require("dotenv").config(".env");
 const process = require("process");
-
 const  { fork } = require("child_process");
 const cluster = require("cluster");
 const os = require("os");
-
 const parse = require("yargs/yargs");
-
 
 const serverInfo = {
     arguments: process.argv.slice(2),
@@ -39,8 +36,6 @@ app.use("/log", express.static(__dirname + "/views"));
 app.use("/registerHome", express.static(__dirname + "/views"));
 app.use("/home", express.static(__dirname + "/views"));
 app.use("/login-error", express.static(__dirname + "/views"));
-
-
 
 //SESSION
 app.use(session({
@@ -80,53 +75,12 @@ passport.deserializeUser( async function(id, done){
 });
 //PASSPORT
 
-
 //YARGS
 /*
 const args = yargs.argv; 
 const PORT = process.env.PORT || 8080;
 */
-const numPC = os.cpus().length;
-const yargs = parse(process.argv.slice(2));
 
-const {port, mode} = yargs	
-    .boolean("debug")
-    .alias({
-        p: "port"
-    })
-	.default({        
-		port: 8081,		
-    }
-    ).argv;
-
-const PORT = port;
-//YARGS
-if (mode === "cluster" && cluster.isPrimary) {
-    clusterMode();
-}else {
-    const routerRandom = require("./routes/random_r.js");
-    //EJERCICIO RANDOM
-    app.use("/api/randoms", routerRandom);
-    //EJERCICIO RANDOM
-}
-
-function clusterMode() {
-	console.log(`NUM PC'S: ${numPC}`);
-	console.log(`PID MASTER ${process.pid}`);
-
-	
-    for (let i = 0; i < numPC; i++) {
-		cluster.fork();
-	}
-     
-    //cluster.fork();
-	cluster.on("exit", (worker) => {
-		console.log("Worker", worker.process.pid, "died", new Date().toLocaleString());
-		cluster.fork();
-	});
-
-	return false;
-}
 
 app.post("/register", (req, res) => {
     const {username, password , direccion} = req.body;    
@@ -237,7 +191,6 @@ app.get("/logout2", (req, res) => {
 app.get("/info", (req, res) => {
     res.json(serverInfo);
 });
-  
 
 function auth(req, res, next){
     if(req.session?.user === "Facu" && req.session?.admin){
@@ -246,6 +199,33 @@ function auth(req, res, next){
     return res.status(401).send("Error de autenticacion");
 }
 
-const server = app.listen(PORT, () => {
-    console.log(`Servidor iniciado en puerto ${server.address().port}`);
-});
+const PORT = parseInt(process.argv[2]) || 8080;
+const modoCluster = process.argv[3] == "CLUSTER";
+
+if (modoCluster && cluster.isPrimary) {
+    //const numCPUs = cpus().length;
+    const numCPUs = os.cpus().length;
+  
+    console.log(`Número de procesadores: ${numCPUs}`);
+    console.log(`PID MASTER ${process.pid}`);
+  
+    for (let i = 0; i < numCPUs; i++) {
+      cluster.fork();
+    }
+  
+    cluster.on("exit", (worker) => {
+      console.log(
+        "Worker",
+        worker.process.pid,
+        "died",
+        new Date().toLocaleString()
+      );
+      cluster.fork();
+    });
+  } else {    
+  
+    app.listen(PORT, () => {
+      console.log(`Servidor express escuchando en el puerto ${PORT}`);
+      console.log(`PID WORKER ${process.pid}`);
+    });
+  }
